@@ -2,58 +2,43 @@
 /* quando ficar apertando ligar e desligar varias vezes, a lampada quebrar */
 
 const buttonLigar = document.querySelector("#ligar");
-const buttonDesligar = document.querySelector("#desligar");
 const lampada = document.querySelector("#lampada");
 const erroMensagem = document.querySelector("#erroMensagem");
-const restaurar = document.querySelector("#restaurar");
 
-let contadorCliques = 0;
+let contadorCliques = 1;
 
-buttonLigar.addEventListener("click", () => {
+buttonLigar.addEventListener("click", gerenciarLampada);
+
+function gerenciarLampada() {
   if (contadorCliques < 5) {
-    lampada.src = "./img/ligada.jpg";
-    lampada.classList.remove("desligada");
-    lampada.classList.add("ligada");
-
-    buttonLigar.disabled = true;
-    buttonDesligar.disabled = false;
-
+    if (lampada.src.includes("desligada.jpg")) {
+      lampada.src = "./img/ligada.jpg";
+      buttonLigar.innerHTML = "Desligar";
+    } else if (lampada.src.includes("ligada.jpg")) {
+      lampada.src = "./img/desligada.jpg";
+      buttonLigar.innerHTML = "Ligar";
+    }
     contadorCliques++;
-  } else if (contadorCliques === 5) {
+  } else {
     quebrarLampada();
   }
-});
-
-buttonDesligar.addEventListener("click", () => {
-  if (contadorCliques < 5) {
-    lampada.src = "./img/desligada.jpg";
-    lampada.classList.remove("ligada");
-    lampada.classList.add("desligada");
-
-    buttonLigar.disabled = false;
-    buttonDesligar.disabled = true;
-
-    contadorCliques++;
-  } else if (contadorCliques === 5) {
-    quebrarLampada();
-  }
-});
+}
 
 function quebrarLampada() {
   lampada.src = "./img/quebrada.jpg";
-  buttonLigar.disabled = true;
-  buttonDesligar.disabled = true;
-
+  buttonLigar.innerHTML = "Trocar Lâmpada";
   erroMensagem.style.display = "block";
-  restaurar.style.display = "block";
+
+  buttonLigar.removeEventListener("click", gerenciarLampada);
+  buttonLigar.addEventListener("click", restaurarLampada);
 }
 
 function restaurarLampada() {
   lampada.src = "./img/desligada.jpg";
-  buttonLigar.disabled = false;
-  buttonDesligar.disabled = true;
-
+  buttonLigar.innerHTML = "Ligar";
   erroMensagem.style.display = "none";
-  restaurar.style.display = "none";
   contadorCliques = 0;
+
+  buttonLigar.removeEventListener("click", restaurarLampada);
+  buttonLigar.addEventListener("click", gerenciarLampada);
 }
